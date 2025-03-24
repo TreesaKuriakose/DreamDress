@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - Dream Dress Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Edit Profile</h2>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {{ field.label }}
+                        </label>
+                        
+                        {% if field.name == 'profile_picture' %}
+                        <div class="mb-2">
+                            {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="Current profile picture" 
+                                 class="img-thumbnail mb-2" style="max-height: 150px;">
+                            <p class="text-muted">Current profile picture. Upload a new one to change it.</p>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
+                        {{ field }}
+                        
+                        {% if field.help_text %}
+                        <div class="form-text text-muted">
+                            {{ field.help_text }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if field.errors %}
+                        <div class="alert alert-danger mt-2">
+                            {{ field.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="{% url 'user-profile' user.username %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

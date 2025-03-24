@@ -1,0 +1,131 @@
+/* General styles */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar customization */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Card customization */
+.card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Blog post styles */
+.blog-post {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.blog-post-meta {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.blog-post img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Comments section */
+.comments {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Form styling */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Button customization */
+.btn {
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Profile page */
+.profile-header {
+    background-color: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 2rem;
+    justify-content: center;
+}
+
+.page-link {
+    color: #007bff;
+    background-color: white;
+    border: 1px solid #dee2e6;
+}
+
+.page-link:hover {
+    color: #0056b3;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+/* Footer */
+footer {
+    margin-top: 4rem;
+    padding: 2rem 0;
+    background-color: #343a40;
+    color: white;
+}
+
+/* Responsive images */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+    .blog-post {
+        padding: 1rem;
+    }
+    
+    .profile-header {
+        text-align: center;
+    }
+} 

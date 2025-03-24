@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile.user.username }}'s Profile - Dream Dress Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}" 
+                     class="rounded-circle img-fluid mb-3" style="max-width: 150px;">
+                {% else %}
+                <img src="https://via.placeholder.com/150" alt="Default profile picture" 
+                     class="rounded-circle img-fluid mb-3">
+                {% endif %}
+                
+                <h3 class="card-title">{{ profile.user.username }}</h3>
+                {% if profile.bio %}
+                <p class="card-text">{{ profile.bio }}</p>
+                {% endif %}
+                
+                <p class="text-muted">
+                    Member since {{ profile.user.date_joined|date:"F Y" }}
+                </p>
+                
+                {% if user == profile.user %}
+                <a href="{% url 'edit-profile' %}" class="btn btn-primary">Edit Profile</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <h2 class="mb-4">{{ profile.user.username }}'s Blog Posts</h2>
+        
+        {% for blog in user_blogs %}
+        <div class="card mb-4">
+            {% if blog.image %}
+            <img src="{{ blog.image.url }}" class="card-img-top" alt="{{ blog.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h3 class="card-title">{{ blog.title }}</h3>
+                <p class="card-text">{{ blog.content|truncatewords:50 }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <a href="{% url 'blog-detail' blog.pk %}" class="btn btn-sm btn-outline-primary">Read More</a>
+                        {% if user == blog.author %}
+                        <a href="{% url 'blog-update' blog.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a href="{% url 'blog-delete' blog.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        {% endif %}
+                    </div>
+                    <small class="text-muted">{{ blog.created_date|date:"F d, Y" }}</small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">
+            No blog posts yet.
+            {% if user == profile.user %}
+            <a href="{% url 'blog-create' %}">Create your first post!</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

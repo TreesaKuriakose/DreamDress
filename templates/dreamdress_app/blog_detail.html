@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ object.title }} - Dream Dress Blog{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">{{ object.title }}</h1>
+            <div class="text-muted mb-2">
+                <small>
+                    Posted by {{ object.author }} on {{ object.created_date|date:"F d, Y" }}
+                    {% if object.created_date != object.updated_date %}
+                        (Updated on {{ object.updated_date|date:"F d, Y" }})
+                    {% endif %}
+                    • {{ object.view_count }} view{{ object.view_count|pluralize }}
+                </small>
+            </div>
+            
+            {% if object.image %}
+            <div class="blog-image mb-4">
+                <img src="{{ object.image.url }}" alt="{{ object.title }}" class="img-fluid rounded">
+            </div>
+            {% endif %}
+            
+            <p class="card-text">{{ object.content|linebreaks }}</p>
+            
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="like-section">
+                    {% if user.is_authenticated %}
+                    <button class="btn btn-outline-danger like-btn {% if is_liked %}liked{% endif %}" 
+                            data-blog-id="{{ object.pk }}"
+                            id="like-btn-{{ object.pk }}">
+                        <i class="fas fa-heart {% if is_liked %}text-danger{% endif %}"></i>
+                        <span class="like-count">{{ object.like_count }}</span>
+                    </button>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-danger">
+                        <i class="fas fa-heart"></i>
+                        <span class="like-count">{{ object.like_count }}</span>
+                    </a>
+                    {% endif %}
+                </div>
+                
+                {% if user == object.author %}
+                <div>
+                    <a href="{% url 'blog-update' object.pk %}" class="btn btn-outline-primary">Edit</a>
+                    <a href="{% url 'blog-delete' object.pk %}" class="btn btn-outline-danger">Delete</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="mt-4">
+        <h3>Comments</h3>
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'add-comment' object.pk %}" class="mb-4">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit" class="btn btn-primary">Add Comment</button>
+            </form>
+        {% else %}
+            <p><a href="{% url 'login' %}">Login</a> to add a comment.</p>
+        {% endif %}
+
+        {% for comment in comments %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="card-text">{{ comment.content }}</p>
+                    <small class="text-muted">
+                        By {{ comment.author }} on {{ comment.created_date|date:"F d, Y" }}
+                    </small>
+                </div>
+            </div>
+        {% empty %}
+            <p>No comments yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const likeBtn = document.querySelector('.like-btn');
+    if (likeBtn) {
+        likeBtn.addEventListener('click', function() {
+            const blogId = this.dataset.blogId;
+            const likeCount = this.querySelector('.like-count');
+            const heartIcon = this.querySelector('.fas');
+            
+            fetch(`/blog/${blogId}/like/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.liked) {
+                    heartIcon.classList.add('text-danger');
+                    this.classList.add('liked');
+                } else {
+                    heartIcon.classList.remove('text-danger');
+                    this.classList.remove('liked');
+                }
+                likeCount.textContent = data.like_count;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    }
+});
+</script>
+
+<style>
+.like-btn {
+    transition: all 0.3s ease;
+}
+.like-btn.liked {
+    background-color: #dc3545;
+    color: white;
+}
+.like-btn:hover {
+    transform: scale(1.1);
+}
+</style>
+{% endblock %}
+{% endblock %} 

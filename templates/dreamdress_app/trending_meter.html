@@ -1,0 +1,59 @@
+{% load static %}
+{% load blog_filters %}
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-fire"></i> Trending Now
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="trending-meter">
+            {% for blog in trending_posts %}
+            <div class="trending-item mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1">
+                            <a href="{% url 'blog-detail' blog.pk %}" class="text-decoration-none">{{ blog.title }}</a>
+                        </h6>
+                        <small class="text-muted">{{ blog.view_count }} views</small>
+                    </div>
+                    <div class="trending-score">
+                        {% if forloop.counter <= 3 %}
+                            <span class="badge bg-danger">Hot</span>
+                        {% elif forloop.counter <= 5 %}
+                            <span class="badge bg-warning">Trending</span>
+                        {% else %}
+                            <span class="badge bg-info">Popular</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="progress mt-2" style="height: 4px;">
+                    <div class="progress-bar {% if forloop.counter <= 3 %}bg-danger{% elif forloop.counter <= 5 %}bg-warning{% else %}bg-info{% endif %}" 
+                         role="progressbar" 
+                         style="width: {{ blog.view_count|div:max_views|mul:100 }}%"
+                         aria-valuenow="{{ blog.view_count|div:max_views|mul:100 }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No trending posts yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+.trending-meter .progress {
+    background-color: #f8f9fa;
+    border-radius: 2px;
+}
+.trending-meter .progress-bar {
+    transition: width 0.6s ease;
+}
+.trending-item:hover .progress-bar {
+    width: 100% !important;
+}
+</style> 

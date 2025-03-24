@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load blog_filters %}
+
+{% block title %}Dream Dress Blog - Home{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-4">Latest Blog Posts</h1>
+            {% for blog in blogs %}
+            <div class="card mb-4">
+                {% if blog.image %}
+                <img src="{{ blog.image.url }}" class="card-img-top" alt="{{ blog.title }}" style="height: 300px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title h4">
+                        <a href="{% url 'blog-detail' blog.pk %}" class="text-decoration-none">{{ blog.title }}</a>
+                    </h2>
+                    <div class="text-muted mb-2">
+                        <small>
+                            Posted by {{ blog.author }} on {{ blog.created_date|date:"F d, Y" }}
+                            • {{ blog.view_count }} view{{ blog.view_count|pluralize }}
+                            • <i class="fas fa-heart text-danger"></i> {{ blog.like_count }}
+                        </small>
+                    </div>
+                    <p class="card-text">{{ blog.content|truncatewords:50 }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'blog-detail' blog.pk %}" class="btn btn-primary">Read More</a>
+                        {% if user == blog.author %}
+                        <div>
+                            <a href="{% url 'blog-update' blog.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a href="{% url 'blog-delete' blog.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info">
+                No blog posts yet. {% if user.is_authenticated %}<a href="{% url 'blog-create' %}">Create one!</a>{% endif %}
+            </div>
+            {% endfor %}
+
+            {% if is_paginated %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">&laquo; First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            {% include 'dreamdress_app/trending_meter.html' %}
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">About Dream Dress Blog</h5>
+                    <p class="card-text">Welcome to our fashion blog dedicated to beautiful dresses and style tips!</p>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'blog-create' %}" class="btn btn-success">Create New Post</a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary">Login to Post</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
